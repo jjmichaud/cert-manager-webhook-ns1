@@ -21,6 +21,9 @@ import (
 	ns1DNS "gopkg.in/ns1/ns1-go.v2/rest/model/dns"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	"k8s.io/klog/v2"
+
 )
 
 var groupName = os.Getenv("GROUP_NAME")
@@ -29,6 +32,8 @@ func main() {
 	if groupName == "" {
 		panic("GROUP_NAME must be specified")
 	}
+
+	klog.Infof("Running JJM version...hello!")
 
 	// This will register our NS1 DNS provider with the webhook serving
 	// library, making it available as an API under the provided groupName.
@@ -226,6 +231,12 @@ func (c *ns1DNSProviderSolver) parseChallenge(ch *v1alpha1.ChallengeRequest) (
 	zone string, domain string, err error,
 ) {
 
+
+	klog.Infof("parseChallenge Zone: %s", zone)
+	klog.Infof("parseChallenge Domain: %s", domain)
+	klog.Infof("parseChallenge ch.ResolvedFQDN: %s", ch.ResolvedFQDN)
+	klog.Infof("parseChallenge ch.ResolvedZone: %s", ch.ResolvedZone)
+
 	if zone, err = util.FindZoneByFqdn(
 		ch.ResolvedFQDN, util.RecursiveNameservers,
 	); err != nil {
@@ -233,11 +244,20 @@ func (c *ns1DNSProviderSolver) parseChallenge(ch *v1alpha1.ChallengeRequest) (
 	}
 	zone = util.UnFqdn(zone)
 
+        // okd.ctctlabs.net
+	klog.Infof("parseChallenge Zone 2: %s", zone)
+
+
 	if idx := strings.Index(ch.ResolvedFQDN, "." + ch.ResolvedZone); idx != -1 {
+		klog.Infof("parseChallenge idx case 1")
 		domain = ch.ResolvedFQDN[:idx]
 	} else {
+		klog.Infof("parseChallenge idx case 2")
 		domain = util.UnFqdn(ch.ResolvedFQDN)
 	}
+
+	// _acme-challenge
+	klog.Infof("parseChallenge Domain 2: %s", domain)
 
 	return zone, domain, nil
 }

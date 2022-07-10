@@ -8,6 +8,11 @@ require (
 	k8s.io/apiextensions-apiserver v0.17.0
 	k8s.io/apimachinery v0.17.0
 	k8s.io/client-go v0.17.0
+	k8s.io/klog/v2 v2.70.1
+)
+
+require (
+	github.com/go-logr/logr v1.2.3 // indirect
 )
 
 replace github.com/prometheus/client_golang => github.com/prometheus/client_golang v0.9.4
